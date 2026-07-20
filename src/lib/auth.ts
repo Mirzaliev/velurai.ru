@@ -39,6 +39,10 @@ export const auth = betterAuth({
         yandex({
           clientId: process.env.YANDEX_CLIENT_ID ?? "",
           clientSecret: process.env.YANDEX_CLIENT_SECRET ?? "",
+          // Yandex OAuth scopes. If you get "invalid_scope", make sure these
+          // permissions are enabled for your app at https://oauth.yandex.com/.
+          // Add "login:avatar" back if you need avatars and your app supports it.
+          scopes: ["login:info", "login:email"],
         }),
       ],
     }),
