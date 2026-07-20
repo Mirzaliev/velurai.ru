@@ -130,7 +130,7 @@ OAuth-аккаунты и credentials better-auth:
 
 ## Поток авторизации
 
-1. Пользователь открывает `/sign-in` или `/sign-up`.
+1. Пользователь открывает `/login` или `/register`.
 2. Вводит email + пароль или авторизуется через Yandex.
 3. better-auth создаёт/обновляет `User`, `Account`, `Session`.
 4. Middleware проверяет наличие сессионной cookie.
@@ -141,15 +141,15 @@ OAuth-аккаунты и credentials better-auth:
 
 ### Middleware
 
-- Пропускает публичные маршруты: `/`, `/sign-in`, `/sign-up`, `/api/auth/*`.
+- Пропускает публичные маршруты: `/`, `/login`, `/register`, `/api/auth/*`.
 - Для остальных проверяет наличие сессионной cookie.
-- При отсутствии cookie редиректит на `/sign-in`.
+- При отсутствии cookie редиректит на `/login`.
 - Определяет slug платформы из пути и передаёт в заголовок `x-platform-slug`.
 
 ### Server helpers
 
 - `getSession()` — получить текущую сессию.
-- `requireAuth()` — требовать авторизацию, иначе редирект на `/sign-in`.
+- `requireAuth()` — требовать авторизацию, иначе редирект на `/login`.
 - `requireAdmin()` — требовать глобальную роль `admin`.
 - `requirePlatformAccess(slug)` — требовать доступ к платформе.
 
@@ -161,4 +161,4 @@ OAuth-аккаунты и credentials better-auth:
 - `src/lib/auth.ts` — конфигурация better-auth
 - `src/lib/auth/helpers.ts` — server helpers для проверки прав
 - `src/app/api/auth/[...all]/route.ts` — единый API-роут better-auth
-- `src/middleware.ts` — проверка сессии на уровне middleware
+- `src/proxy.ts` — проверка сессии на уровне proxy (middleware)

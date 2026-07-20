@@ -16,6 +16,7 @@ export { Footer } from "./footer";
 export { AuthLayout } from "./auth-layout";
 export { Field } from "./auth-field";
 export { Divider } from "./auth-divider";
-export { SocialBtn, GoogleIcon } from "./auth-social-button";
+export { SocialBtn, YandexIcon } from "./auth-social-button";
+export { AuthError } from "./auth-error";
 export { LoginForm } from "./login-form";
 export { RegisterForm } from "./register-form";

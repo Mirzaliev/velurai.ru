@@ -3,25 +3,33 @@
 export function SocialBtn({
   icon,
   label,
+  onClick,
+  disabled,
+  loading,
 }: {
   icon: React.ReactNode;
   label: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  loading?: boolean;
 }) {
   return (
-    <button className="glass inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white hover:bg-white/10">
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled || loading}
+      className="glass inline-flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-70"
+    >
       {icon}
-      {label}
+      {loading ? "Подождите…" : label}
     </button>
   );
 }
 
-export function GoogleIcon() {
+export function YandexIcon() {
   return (
     <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
-      <path
-        fill="#EA4335"
-        d="M12 10.2v3.9h5.5c-.2 1.4-1.6 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.4 14.6 2.5 12 2.5 6.8 2.5 2.6 6.7 2.6 12S6.8 21.5 12 21.5c6.9 0 9.4-4.8 9.4-7.4 0-.5 0-.9-.1-1.3H12z"
-      />
+      <path fill="#FC3F1D" d="M12.014 2h3.048v20h-2.987v-13.7l-4.32 5.48h-2.66l4.35-5.55c-1.41-1.76-2.55-3.26-4.17-3.26H4.014V22h3.12V9.13l5.14-6.54c-.26-.59-.26-.59-.26-.59z" />
     </svg>
   );
 }
