@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 import { authClient } from "@/lib/auth/client";
+import { getCurrentUserRole } from "@/lib/auth/actions";
 import {
   getAuthErrorMessage,
   validateAuthEmail,
@@ -15,8 +16,6 @@ import { Field } from "./auth-field";
 import { Divider } from "./auth-divider";
 import { SocialBtn, YandexIcon } from "./auth-social-button";
 import { AuthError } from "./auth-error";
-
-const CALLBACK_URL = "/teacher";
 
 export function LoginForm() {
   const router = useRouter();
@@ -47,7 +46,6 @@ export function LoginForm() {
     const result = await authClient.signIn.email({
       email,
       password,
-      callbackURL: CALLBACK_URL,
     });
 
     setLoading(false);
@@ -57,7 +55,8 @@ export function LoginForm() {
       return;
     }
 
-    router.push(CALLBACK_URL);
+    const role = await getCurrentUserRole();
+    router.push(role === "admin" ? "/admin/" : "/app");
     router.refresh();
   }
 
@@ -67,7 +66,7 @@ export function LoginForm() {
 
     const result = await authClient.signIn.oauth2({
       providerId: "yandex",
-      callbackURL: CALLBACK_URL,
+      callbackURL: "/app/redirect",
     });
 
     setOauthLoading(false);

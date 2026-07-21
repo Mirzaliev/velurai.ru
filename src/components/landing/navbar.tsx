@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, Sparkles, X } from "lucide-react";
+import { authClient } from "@/lib/auth/client";
 
 const links = [
   { href: "#features", label: "Возможности" },
@@ -15,6 +16,8 @@ const links = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session } = authClient.useSession();
+  const isAuthenticated = Boolean(session);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4">
@@ -28,7 +31,9 @@ export function Navbar() {
           <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-purple-500 to-blue-500 glow-purple">
             <Sparkles className="h-4 w-4 text-white" />
           </div>
-          <span className="text-base font-semibold tracking-tight">Nebula AI</span>
+          <span className="text-base font-semibold tracking-tight">
+            Nebula AI
+          </span>
         </a>
 
         <div className="hidden items-center gap-7 md:flex">
@@ -49,19 +54,21 @@ export function Navbar() {
               >
                 {l.label}
               </a>
-            )
+            ),
           )}
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
+          {!isAuthenticated && (
+            <Link
+              href="/login"
+              className="rounded-xl px-4 py-2 text-sm text-white/80 transition-colors hover:text-white"
+            >
+              Войти
+            </Link>
+          )}
           <Link
-            href="/login"
-            className="rounded-xl px-4 py-2 text-sm text-white/80 transition-colors hover:text-white"
-          >
-            Войти
-          </Link>
-          <Link
-            href="/register"
+            href={isAuthenticated ? "/app" : "/register"}
             className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition-transform hover:scale-[1.03]"
           >
             Начать
@@ -104,10 +111,19 @@ export function Navbar() {
                 >
                   {l.label}
                 </a>
-              )
+              ),
+            )}
+            {!isAuthenticated && (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="text-sm text-white/80"
+              >
+                Войти
+              </Link>
             )}
             <Link
-              href="/register"
+              href={isAuthenticated ? "/app" : "/register"}
               onClick={() => setOpen(false)}
               className="mt-2 rounded-xl bg-white px-4 py-2 text-center text-sm font-medium text-black"
             >

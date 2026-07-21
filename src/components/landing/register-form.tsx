@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { User, Mail, Lock, ArrowRight } from "lucide-react";
 import { authClient } from "@/lib/auth/client";
+import { getCurrentUserRole } from "@/lib/auth/actions";
 import {
   getAuthErrorMessage,
   validateAuthEmail,
@@ -15,8 +16,6 @@ import { Field } from "./auth-field";
 import { Divider } from "./auth-divider";
 import { SocialBtn, YandexIcon } from "./auth-social-button";
 import { AuthError } from "./auth-error";
-
-const CALLBACK_URL = "/teacher";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -55,7 +54,6 @@ export function RegisterForm() {
       email,
       password,
       name: name.trim(),
-      callbackURL: CALLBACK_URL,
     });
 
     setLoading(false);
@@ -65,7 +63,8 @@ export function RegisterForm() {
       return;
     }
 
-    router.push(CALLBACK_URL);
+    const role = await getCurrentUserRole();
+    router.push(role === "admin" ? "/admin/" : "/app");
     router.refresh();
   }
 
@@ -75,7 +74,7 @@ export function RegisterForm() {
 
     const result = await authClient.signIn.oauth2({
       providerId: "yandex",
-      callbackURL: CALLBACK_URL,
+      callbackURL: "/app/redirect",
     });
 
     setOauthLoading(false);
@@ -139,8 +138,7 @@ export function RegisterForm() {
             disabled={loading}
             className="mt-0.5 accent-purple-500"
           />
-          Я соглашаюсь с условиями использования и политикой
-          конфиденциальности.
+          Я соглашаюсь с условиями использования и политикой конфиденциальности.
         </label>
         <button
           type="submit"
