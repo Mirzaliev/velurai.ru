@@ -14,17 +14,18 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/components/dashboard/lib/utils";
 
-export function NavUser({
-  user,
-}: {
-  readonly user: {
-    readonly name: string;
-    readonly email: string;
-    readonly avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
 
+  const user = {
+    id: "2",
+    name: "Ammar Khan",
+    username: "ammarkhnz",
+    email: "hello@ammarkhnz.com",
+    avatar: "",
+    role: "admin",
+  };
+  
   return (
     <SidebarMenu>
       <SidebarMenuItem>

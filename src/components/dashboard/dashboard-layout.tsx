@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
 
 import { cookies } from "next/headers";
-import Link from "next/link";
+// import Link from "next/link";
 
 
 import { AppSidebar } from "./app-sidebar";
 // import { SimpleIcon } from "@/components/simple-icon";
-import { Button } from "@/components/ui/button";
+//import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { users } from "./config/app-config";
+// import { users } from "./config/app-config";
 import { cn } from "./lib/utils";
 import { getPreference } from "./server/server-actions";
 
-import { AccountSwitcher } from "./account-switcher";
+// import { AccountSwitcher } from "./account-switcher";
 // import { LayoutControls } from "./layout-controls";
 import { SearchDialog } from "./search-dialog";
 import { ThemeSwitcher } from "./theme-switcher";
@@ -64,7 +64,7 @@ export default async function DashboardLayout({ children }: Readonly<{ children:
             </div>
             <div className="flex items-center gap-2">
               <ThemeSwitcher />
-              <AccountSwitcher users={users} />
+              {/*<AccountSwitcher />*/}
             </div>
           </div>
         </header>
