@@ -21,12 +21,17 @@
 - `user` — обычный пользователь
 - `admin` — глобальный администратор Velurai
 
-### Роли внутри платформы (таблица `UserPlatformAccess`)
+Глобальные роли определяют доступ к разделам приложения:
 
-- `user` — пользователь платформы
-- `admin` — администратор конкретной платформы
+| Маршрут    | Требуемая роль     | Описание                    |
+| ---------- | ------------------ | --------------------------- |
+| `/app/*`   | `user` или `admin` | Личный кабинет пользователя |
+| `/admin/*` | `admin`            | Административная панель     |
+| остальные  | —                  | Публичные страницы          |
 
-Пока платформа одна (`teacher`), роли платформы не критичны, но заложены для масштабирования.
+### Роли внутри платформы
+
+Таблицы `Platform` и `UserPlatformAccess` остаются в схеме БД, но в текущей версии не используются для контроля доступа. Пользователю предлагаются разные варианты продукта в рамках единого аккаунта, а не изолированные платформы.
 
 ## Таблицы
 
@@ -34,18 +39,19 @@
 
 Поля better-auth по умолчанию + кастомные:
 
-| Поле            | Тип       | Описание                                      |
-| --------------- | --------- | --------------------------------------------- |
-| `id`            | String    | CUID                                          |
-| `email`         | String    | Уникальный email                              |
-| `emailVerified` | Boolean   | Подтверждён ли email (пока не используется)   |
-| `name`          | String?   | Имя пользователя, опционально                 |
-| `image`         | String?   | Аватар, опционально                           |
-| `role`          | UserRole  | Глобальная роль: `user` или `admin`           |
-| `createdAt`     | DateTime  | Дата создания                                 |
-| `updatedAt`     | DateTime  | Дата обновления                               |
+| Поле            | Тип      | Описание                                    |
+| --------------- | -------- | ------------------------------------------- |
+| `id`            | String   | CUID                                        |
+| `email`         | String   | Уникальный email                            |
+| `emailVerified` | Boolean  | Подтверждён ли email (пока не используется) |
+| `name`          | String?  | Имя пользователя, опционально               |
+| `image`         | String?  | Аватар, опционально                         |
+| `role`          | UserRole | Глобальная роль: `user` или `admin`         |
+| `createdAt`     | DateTime | Дата создания                               |
+| `updatedAt`     | DateTime | Дата обновления                             |
 
 Связи:
+
 - `sessions` → `Session[]`
 - `accounts` → `Account[]`
 - `platformAccess` → `UserPlatformAccess[]`
@@ -54,62 +60,62 @@
 
 Сессии better-auth:
 
-| Поле        | Тип      | Описание           |
-| ----------- | -------- | ------------------ |
-| `id`        | String   | CUID               |
-| `userId`    | String   | Ссылка на User     |
-| `token`     | String   | Уникальный токен   |
-| `expiresAt` | DateTime | Срок действия      |
-| `ipAddress` | String?  | IP адрес           |
-| `userAgent` | String?  | User-Agent         |
-| `createdAt` | DateTime | Дата создания      |
-| `updatedAt` | DateTime | Дата обновления    |
+| Поле        | Тип      | Описание         |
+| ----------- | -------- | ---------------- |
+| `id`        | String   | CUID             |
+| `userId`    | String   | Ссылка на User   |
+| `token`     | String   | Уникальный токен |
+| `expiresAt` | DateTime | Срок действия    |
+| `ipAddress` | String?  | IP адрес         |
+| `userAgent` | String?  | User-Agent       |
+| `createdAt` | DateTime | Дата создания    |
+| `updatedAt` | DateTime | Дата обновления  |
 
 ### `Account`
 
 OAuth-аккаунты и credentials better-auth:
 
-| Поле                    | Тип       | Описание                       |
-| ----------------------- | --------- | ------------------------------ |
-| `id`                    | String    | CUID                           |
-| `userId`                | String    | Ссылка на User                 |
-| `accountId`             | String    | ID аккаунта у провайдера       |
-| `providerId`            | String    | ID провайдера (yandex и т.д.)  |
-| `accessToken`           | String?   | Access token                   |
-| `refreshToken`          | String?   | Refresh token                  |
-| `idToken`               | String?   | ID token                       |
-| `accessTokenExpiresAt`  | DateTime? | Срок access token              |
-| `refreshTokenExpiresAt` | DateTime? | Срок refresh token             |
-| `scope`                 | String?   | OAuth scope                    |
-| `password`              | String?   | Хеш пароля (для email/password)|
-| `createdAt`             | DateTime  | Дата создания                  |
-| `updatedAt`             | DateTime  | Дата обновления                |
+| Поле                    | Тип       | Описание                        |
+| ----------------------- | --------- | ------------------------------- |
+| `id`                    | String    | CUID                            |
+| `userId`                | String    | Ссылка на User                  |
+| `accountId`             | String    | ID аккаунта у провайдера        |
+| `providerId`            | String    | ID провайдера (yandex и т.д.)   |
+| `accessToken`           | String?   | Access token                    |
+| `refreshToken`          | String?   | Refresh token                   |
+| `idToken`               | String?   | ID token                        |
+| `accessTokenExpiresAt`  | DateTime? | Срок access token               |
+| `refreshTokenExpiresAt` | DateTime? | Срок refresh token              |
+| `scope`                 | String?   | OAuth scope                     |
+| `password`              | String?   | Хеш пароля (для email/password) |
+| `createdAt`             | DateTime  | Дата создания                   |
+| `updatedAt`             | DateTime  | Дата обновления                 |
 
 ### `Verification`
 
 Коды верификации better-auth:
 
-| Поле         | Тип      | Описание                |
-| ------------ | -------- | ----------------------- |
-| `id`         | String   | CUID                    |
-| `identifier` | String   | Идентификатор           |
-| `value`      | String   | Код/токен               |
-| `expiresAt`  | DateTime | Срок действия           |
-| `createdAt`  | DateTime | Дата создания           |
-| `updatedAt`  | DateTime | Дата обновления         |
+| Поле         | Тип      | Описание        |
+| ------------ | -------- | --------------- |
+| `id`         | String   | CUID            |
+| `identifier` | String   | Идентификатор   |
+| `value`      | String   | Код/токен       |
+| `expiresAt`  | DateTime | Срок действия   |
+| `createdAt`  | DateTime | Дата создания   |
+| `updatedAt`  | DateTime | Дата обновления |
 
 ### `Platform`
 
 Платформы продукта:
 
-| Поле       | Тип      | Описание                  |
-| ---------- | -------- | ------------------------- |
-| `id`       | String   | CUID                      |
-| `slug`     | String   | Уникальный slug в URL     |
-| `name`     | String   | Название платформы        |
-| `isActive` | Boolean  | Активна ли платформа      |
-| `createdAt`| DateTime | Дата создания             |
-| `updatedAt`| DateTime | Дата обновления           |
+| Поле        | Тип      | Описание              |
+| ----------- | -------- | --------------------- |
+| `id`        | String   | CUID                  |
+| `slug`      | String   | Уникальный slug в URL |
+| `name`      | String   | Название платформы    |
+| `isActive`  | Boolean  | Активна ли платформа  |
+| `createdAt` | DateTime | Дата создания         |
+| `updatedAt` | DateTime | Дата обновления       |
 
 Сейчас seed-запись: `slug = "teacher"`, `name = "AI для преподавателей"`.
 
@@ -117,14 +123,14 @@ OAuth-аккаунты и credentials better-auth:
 
 Связь пользователя с платформой:
 
-| Поле         | Тип                 | Описание                       |
-| ------------ | ------------------- | ------------------------------ |
-| `id`         | String              | CUID                           |
-| `userId`     | String              | Ссылка на User                 |
-| `platformId` | String              | Ссылка на Platform             |
-| `role`       | PlatformMemberRole  | Роль в платформе               |
-| `createdAt`  | DateTime            | Дата создания                  |
-| `updatedAt`  | DateTime            | Дата обновления                |
+| Поле         | Тип                | Описание           |
+| ------------ | ------------------ | ------------------ |
+| `id`         | String             | CUID               |
+| `userId`     | String             | Ссылка на User     |
+| `platformId` | String             | Ссылка на Platform |
+| `role`       | PlatformMemberRole | Роль в платформе   |
+| `createdAt`  | DateTime           | Дата создания      |
+| `updatedAt`  | DateTime           | Дата обновления    |
 
 Уникальный индекс по `(userId, platformId)`.
 
@@ -133,25 +139,26 @@ OAuth-аккаунты и credentials better-auth:
 1. Пользователь открывает `/login` или `/register`.
 2. Вводит email + пароль или авторизуется через Yandex.
 3. better-auth создаёт/обновляет `User`, `Account`, `Session`.
-4. Middleware проверяет наличие сессионной cookie.
-5. Серверные компоненты через `requireAuth()` / `requirePlatformAccess()` / `requireAdmin()` проверяют права.
-6. После успешного входа пользователь попадает на `/teacher`.
+4. Proxy (`src/proxy.ts`) проверяет наличие сессионной cookie для защищённых маршрутов.
+5. Серверные компоненты через `requireRole()` / `requireAdmin()` проверяют роль.
+6. После успешного входа пользователь попадает на `/app`.
 
 ## Защита маршрутов
 
-### Middleware
+### Proxy (`src/proxy.ts`)
 
-- Пропускает публичные маршруты: `/`, `/login`, `/register`, `/api/auth/*`.
-- Для остальных проверяет наличие сессионной cookie.
-- При отсутствии cookie редиректит на `/login`.
-- Определяет slug платформы из пути и передаёт в заголовок `x-platform-slug`.
+- Проверяет авторизацию на уровне маршрута.
+- Публичные маршруты: `/`, `/login`, `/register`, `/api/auth/*`.
+- Защищённые маршруты: `/app/*` и `/admin/*`.
+- При отсутствии сессионной cookie редиректит на `/login?callbackUrl=...`.
+- Все остальные страницы доступны без авторизации.
 
 ### Server helpers
 
 - `getSession()` — получить текущую сессию.
 - `requireAuth()` — требовать авторизацию, иначе редирект на `/login`.
+- `requireRole(roles)` — требовать одну из указанных глобальных ролей.
 - `requireAdmin()` — требовать глобальную роль `admin`.
-- `requirePlatformAccess(slug)` — требовать доступ к платформе.
 
 ## Файлы
 
@@ -161,4 +168,4 @@ OAuth-аккаунты и credentials better-auth:
 - `src/lib/auth.ts` — конфигурация better-auth
 - `src/lib/auth/helpers.ts` — server helpers для проверки прав
 - `src/app/api/auth/[...all]/route.ts` — единый API-роут better-auth
-- `src/proxy.ts` — проверка сессии на уровне proxy (middleware)
+- `src/proxy.ts` — проверка сессии на уровне proxy (бывший middleware)

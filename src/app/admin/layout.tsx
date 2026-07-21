@@ -12,19 +12,19 @@ import {
   PreferencesStoreProvider,
   DashboardLayout,
 } from "@/components/dashboard";
-import { requireRole } from "@/lib/auth/helpers";
+import { requireAdmin } from "@/lib/auth/helpers";
 
 import "@/components/dashboard/theme.css";
 
 export const metadata: Metadata = {
-  title: APP_CONFIG.meta.title,
+  title: `Админ-панель — ${APP_CONFIG.meta.title}`,
   description: APP_CONFIG.meta.description,
 };
 
-export default async function RootLayout({
+export default async function AdminRootLayout({
   children,
 }: Readonly<{ children: ReactNode }>) {
-  await requireRole(["user", "admin"]);
+  await requireAdmin();
 
   const {
     theme_mode,
@@ -35,6 +35,7 @@ export default async function RootLayout({
     sidebar_collapsible,
     font,
   } = PREFERENCE_DEFAULTS;
+
   return (
     <html
       lang="en"
@@ -48,7 +49,6 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Applies theme and layout preferences on load to avoid flicker and unnecessary server rerenders. */}
         <ThemeBootScript />
       </head>
       <body className={`${fontVars} min-h-screen antialiased`}>

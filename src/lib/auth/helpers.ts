@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import type { UserRole } from "@/generated/prisma/enums";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -17,38 +18,20 @@ export async function requireAuth() {
   return session;
 }
 
-export async function requireAdmin() {
+export async function requireRole(roles: UserRole[]) {
   const session = await requireAuth();
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { role: true },
   });
-  if (user?.role !== "admin") {
+  if (!user || !roles.includes(user.role)) {
     redirect("/");
   }
   return session;
 }
 
-export async function requirePlatformAccess(platformSlug: string) {
-  const session = await requireAuth();
-  const platform = await prisma.platform.findUnique({
-    where: { slug: platformSlug },
-  });
-  if (!platform || !platform.isActive) {
-    redirect("/");
-  }
-  const access = await prisma.userPlatformAccess.findUnique({
-    where: {
-      userId_platformId: {
-        userId: session.user.id,
-        platformId: platform.id,
-      },
-    },
-  });
-  if (!access) {
-    redirect("/");
-  }
-  return { session, platform, access };
+export async function requireAdmin() {
+  return requireRole(["admin"]);
 }
 
 export async function getCurrentUser() {
